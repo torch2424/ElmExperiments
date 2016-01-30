@@ -1,7 +1,7 @@
 
 --Creating Module counter, where we expose (Make public)
 --The Functions f(g(x)), Model, init, Action, update and view
-module Counter(Model, init, Action, update, view) where
+module Counter(Model, init, Action, update, view, viewWithRemoveButton, Context) where
 
 --Imports, import html
 import Html exposing (..)
@@ -12,6 +12,12 @@ import Html.Events exposing (onClick)
 
 --Declare of varaible  type of model
 type alias Model = Int
+
+--Our Counter Context (State), for removing a counter
+type alias Context =
+    {actions: Signal.Address Action
+    , remove: Signal.Address ()
+    }
 
 --Declare our init function
 --init, a function that
@@ -57,6 +63,17 @@ view address model =
         , button [onClick address Increment ] [text "+ count"]
         ]
 
+--Our About view but also with remove button
+viewWithRemoveButton : Context -> Model -> Html
+viewWithRemoveButton context model =
+  div []
+    [ button [ onClick context.actions Decrement ] [ text "-" ]
+    , div [ countStyle ] [ text (toString model) ]
+    , button [ onClick context.actions Increment ] [ text "+" ]
+    , div [ countStyle, removeButton, centerClass ] []
+    , button [ onClick context.remove () ] [ text "X" ]
+    ]
+
 --Css classes, count style is a fucntion
 --that is an attribute type
 countStyle : Attribute
@@ -79,3 +96,8 @@ centerClass =
     , ("margin-left", "auto")
     , ("margin-right", "auto")
     ]
+
+removeButton: Attribute
+removeButton =
+    style
+    [("margin-left", "auto")]
